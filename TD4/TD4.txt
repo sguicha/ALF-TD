@@ -1,0 +1,47 @@
+grammar haha;
+r : ID EQUAL Expr EOI;
+
+//expresia 
+Expr : Sum ;
+
+//suma
+Sum : Sub '+' Sum 
+	| Sub
+	;
+
+//diferenta	
+Sub : Mul '-' Sub 
+	| Mul
+	;
+
+//inmultire
+Mul : Div '*' Mul 
+	| Div
+	;
+
+//impartire	
+Div : Exp '/' Div 
+	| Exp
+	;
+
+//exponentiala
+Exp : Pri '^' Exp 
+	| Pri
+	;
+
+//prioritizarea in functie de paranteza
+Pri : INT
+	| '('Sum')' 
+	;
+
+//definirea variabilei
+ID : [a-zA-Z]+ ;
+
+//separatorul variabilei de expresie 
+EQUAL : ' = ' ;
+
+//definirea numerelor
+INT : [0-9]+ ;
+
+//sfarsitul input-ului
+EOI : ' $$' ;
