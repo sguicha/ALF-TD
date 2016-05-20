@@ -1,0 +1,54 @@
+<p>Regexp validator</p>
+
+<button onclick="myFunction()">Check expr</button>
+
+<!-paragraful cu valoarea noastra->
+<p id="demo">waka = 5 :-)</p>
+<p id="demo2">weed = 13 + 7 :-) </p>
+<p id="demo3">cika = 345 * 10 :-)</p>
+<p id="demo4">sick = 345653 - 45635 :-)</p>
+<p id="demo5">snoop = Never</p>
+
+<script>
+function myFunction() {
+    //lui str ii dam valoarea paragrafului cu expresia noastra
+    var str = document.getElementById("demo").innerHTML; 
+	var str2 = document.getElementById("demo2").innerHTML;
+	var str3 = document.getElementById("demo3").innerHTML;
+	var str4 = document.getElementById("demo4").innerHTML;
+	var str5 = document.getElementById("demo5").innerHTML;
+	
+    //verificam val lui str cu expresia reg , dak e ok ne afis ca merge , ivers ..nu merge
+    if (/(([a-z,A-Z]{4})\s=\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[+]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})\s=\s[0-9]+\s[*]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[-]\s[0-9]+\s[:][-][)]+)/i.test(str)) 
+        {
+            document.getElementById("demo").innerHTML = "merge";}
+   else 
+         {     document.getElementById("demo").innerHTML = "nu merge";}
+    if (/(([a-z,A-Z]{4})\s=\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[+]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})\s=\s[0-9]+\s[*]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[-]\s[0-9]+\s[:][-][)]+)/i.test(str2)) 
+        {
+            document.getElementById("demo2").innerHTML = "merge";}
+   else 
+         {     document.getElementById("demo2").innerHTML = "nu merge";}
+	
+	if (/(([a-z,A-Z]{4})\s=\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[+]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})\s=\s[0-9]+\s[*]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[-]\s[0-9]+\s[:][-][)]+)/i.test(str3)) 
+        {
+            document.getElementById("demo3").innerHTML = "merge";}
+   else 
+         {     document.getElementById("demo3").innerHTML = "nu merge";}
+	
+	if (/(([a-z,A-Z]{4})\s=\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[+]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})\s=\s[0-9]+\s[*]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[-]\s[0-9]+\s[:][-][)]+)/i.test(str4)) 
+        {
+            document.getElementById("demo4").innerHTML = "merge";}
+   else 
+         {     document.getElementById("demo4").innerHTML = "nu merge";}
+    
+	if (/(([a-z,A-Z]{4})\s=\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[+]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})\s=\s[0-9]+\s[*]\s[0-9]+\s[:][-][)]+)|(([a-z,A-Z]{4})+\s=\s[0-9]+\s[-]\s[0-9]+\s[:][-][)]+)/i.test(str5)) 
+        {
+            document.getElementById("demo5").innerHTML = "merge";}
+   else 
+         {     document.getElementById("demo5").innerHTML = "nu merge";}
+}
+</script>
+
+</body>
+</html>
