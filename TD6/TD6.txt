@@ -1,0 +1,263 @@
+var addOneMachine = {};
+addOneMachine.stateTransition = {
+    "start": {
+        "0": ["0", "right", "z"],
+        "1" : ["1", "right", "u"],
+        "": ["", "right", "stop"]
+    },
+    "z": {
+        "0": ["0", "right", "zz"],
+        "1": ["1", "right", "zu"],
+        "": ["", "right", "stop"]
+    },
+    "zz": {
+        "0": ["0", "right", "stop"],
+        "1": ["", "right", "stop"],
+        "": ["0", "right", "stop"]
+    },
+    "zu": {
+        "0": ["", "right", "stop"],
+        "1": ["1", "right", "stop"],
+        "": ["1", "right", "stop"]
+    },
+    "u": {
+        "0": ["0", "right", "zu"],
+        "1": ["1", "right", "uu"],
+        "": ["", "right", "stop"]
+    },
+    "uu": {
+        "0": ["", "right", "stop"],
+        "1": ["1", "right", "carry"],
+        "": ["1", "right", "carry"]
+    },
+    "carry": {
+        "0": ["0", "right", "stop"],
+        "1": ["", "right", "stop"],
+        "": ["0", "right", "stop"]
+    },
+    "stop": {}  // Don't do anything else.
+};
+addOneMachine.alphabet = ["0", "1", ""];
+addOneMachine.startTape = "11";
+addOneMachine.position = 0;
+addOneMachine.state = "start";
+addOneMachine.negArr = [];
+addOneMachine.posArr = [];
+addOneMachine.boxWidth = 25;
+addOneMachine.boxHeight = 30;
+addOneMachine.startHeight = 0;
+addOneMachine.numberHeight = addOneMachine.startHeight + 50;
+addOneMachine.center = 0;
+var isValidChar = function(c, turingMachine){
+    for(var l in turingMachine.alphabet){
+        if (turingMachine.alphabet[l] === str(c)){
+            return true;
+        }
+    }
+    return false;
+};
+var setTape = function(tape, turingMachine){
+    turingMachine.negArr = [];
+    turingMachine.posArr = [];
+    var i = 0;
+    for (var c in tape){
+        if (isValidChar(tape[c], turingMachine)){
+            turingMachine.posArr[i] = tape[c];
+        } else{
+            turingMachine.posArr[i] = "";
+        }
+        i += 1;
+    }
+    return turingMachine;
+};
+var drawNum = function(num, x, y) {
+    fill(0, 0, 0);  // Black text
+    textSize(12);
+    if (str(num).length >= 3 && num % 2 !== 0) {
+        text(num, x, y + 10);
+    } else {
+        text(num, x, y);
+    }
+};
+var numberLine = function(offset, turingMachine) {
+    var y = turingMachine.numberHeight;
+    var x = width/2 + (offset * turingMachine.boxWidth);
+    var i = 0;
+    while (x < width){
+        drawNum(i, x + 8, y);
+        x += turingMachine.boxWidth;
+        i += 1;
+    }
+    x = width/2 + ((offset - 1) * turingMachine.boxWidth);
+    i = -1;
+    while (x > 0 - turingMachine.boxWidth) {
+        drawNum(i, x + 3 , y);
+        x -= turingMachine.boxWidth;
+        i -= 1;
+    }
+};
+var drawBox = function(x, contents, turingMachine, highlight){
+     if (highlight){
+         fill(255, 255, 0);
+     } else{
+          fill(255, 255, 255);
+     }
+     rect(x,
+        turingMachine.startHeight,
+        turingMachine.boxWidth,
+        turingMachine.boxHeight);
+     fill(0, 0, 0);
+     textSize(18);
+     text(contents, x + 8, turingMachine.startHeight + 21);
+};
+var drawTape = function(turingMachine, newCenter) {
+    background(255, 255, 255);
+    var boxWidth = turingMachine.boxWidth;
+    var startHeight = turingMachine.startHeight;
+    var numberHeight = turingMachine.numberHeight;
+    var center = turingMachine.center;
+    if (abs(newCenter - turingMachine.center) > 5){
+        center = newCenter;
+        turingMachine.center = newCenter;
+    }
+    if (center <= -3 || center >= 94){
+        line(0, numberHeight + 15, 400, numberHeight + 15); 
+    } else{
+        line(0, numberHeight + 5, 400, numberHeight +  5);
+    }
+    var offset = -center;
+    var zeroPosition = width/2 + (offset * boxWidth);
+    for (var i = 0; i < turingMachine.posArr.length; i += 1){
+        drawBox(
+            zeroPosition + (i * boxWidth),
+            turingMachine.posArr[i],
+            turingMachine,
+            i === turingMachine.position);
+    }
+    while (i * boxWidth < width - zeroPosition){
+        drawBox(
+            zeroPosition + (i * boxWidth),
+            "",
+            turingMachine,
+            i === turingMachine.position);
+        i += 1;
+    }
+    for (var j = 0; j < turingMachine.negArr.length; j += 1) {
+        drawBox(
+            zeroPosition - ((j + 1) * boxWidth),
+            turingMachine.negArr[j],
+            turingMachine,
+            j + 1 === -turingMachine.position);   
+    }
+    while ((j - 1) * boxWidth < zeroPosition) {
+        drawBox(
+            zeroPosition - ((j + 1) * boxWidth),
+            "",
+            turingMachine,
+            j + 1 === -turingMachine.position);
+        j += 1; 
+    }
+    numberLine(offset, turingMachine);
+};
+var move = function(turingMachine, direction){
+    if (direction === "right") {
+        turingMachine.position += 1;
+    } else if (direction === "left") {
+        turingMachine.position -= 1;
+    }
+    return turingMachine;
+};
+var getTapeValue = function(turingMachine){
+    var pos = turingMachine.position;
+    if (pos >= 0){
+        if (turingMachine.posArr[pos] === undefined){
+            return "";
+        }
+        return turingMachine.posArr[pos];
+    } else{
+        if (turingMachine.negArr[(-pos) - 1] === undefined){
+            return "";   
+        }
+        return turingMachine.negArr[(-pos) - 1];
+    }
+};
+var setTapeValue = function(turingMachine, val){
+    if (!isValidChar(val, turingMachine)){
+        debug("Tried to set invalid character " + val + "!");
+        val = "";
+    }
+    var pos = turingMachine.position;
+    if (pos >= 0){
+        turingMachine.posArr[pos] = val;
+    } else{
+        turingMachine.negArr[(-pos) - 1] = val;
+    }
+    return turingMachine;
+};
+var nextStep = function(turingMachine){
+    var tapeValue = getTapeValue(turingMachine);
+    var state = turingMachine.state;
+    var next = turingMachine.stateTransition[state][tapeValue];
+    turingMachine = setTapeValue(turingMachine, next[0]);
+    turingMachine = move(turingMachine, next[1]);
+    drawTape(turingMachine, turingMachine.position);
+    turingMachine.state = next[2];
+    return turingMachine;
+};
+var table = function(){
+    fill(0, 0, 0);  // Black text
+    text("State:", 10, 100);
+    text("Symbol:", 60, 100);
+    text("Write:", 160, 100);
+    text("Direction:", 210, 100);
+    text("Next state:", 290, 100);
+    line(0, 105, width, 105);
+    var yText = 120;
+    line(130, 90, 130, 400);
+    for(var s in addOneMachine.stateTransition) {
+        var next = addOneMachine.stateTransition[s];
+        if (s !== "stop") {
+            for (var c in addOneMachine.alphabet){
+                var char = addOneMachine.alphabet[c];
+                if (addOneMachine.state === s &&
+                        char === getTapeValue(addOneMachine,
+                                addOneMachine.position)){
+                    fill(255, 0, 0);
+                }
+                text(s, 10, yText);
+                text(char, 60 + 15, yText); 
+        
+                var moves = next[char];
+                text(moves[0], 160 + 15, yText); 
+                text(moves[1], 210, yText); 
+                text(moves[2], 290, yText); 
+            
+                fill(0, 0, 0);
+                yText += 20;
+            }
+        } else{
+            if (addOneMachine.state === s){
+                fill(255, 0, 0);
+            }
+            text(s, 10, yText); // State
+            yText += 20;
+        }
+    }
+};
+
+var mousePressed = function() {
+    if (addOneMachine.state !== "stop"){
+        addOneMachine = nextStep(addOneMachine);
+    } else{
+        drawTape(addOneMachine, 0);
+    }
+    table();
+};
+
+addOneMachine = setTape(addOneMachine.startTape, addOneMachine);
+drawTape(addOneMachine, 0);
+textSize(20);
+fill(0, 0, 0);
+text("Click to run! (one click per step)", 50, 75);
+textSize(12);
+table();
